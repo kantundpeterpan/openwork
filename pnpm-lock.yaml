@@ -123,6 +123,9 @@ importers:
       jsonc-parser:
         specifier: ^3.2.1
         version: 3.3.1
+      katex:
+        specifier: ^0.17.0
+        version: 0.17.0
       lexical:
         specifier: ^0.35.0
         version: 0.35.0
@@ -1411,6 +1414,7 @@ packages:
 
   '@daytonaio/sdk@0.173.0':
     resolution: {integrity: sha512-/eaP3YMhyhkZrmjEYT1pgTWyN0soBqi98+xSEa7lFhI0jc8E83eGv8yOS7DrzDIkc7cZqTmWKHOqn4dZmcfw1A==}
+    deprecated: 'Moved to @daytona/sdk, same API, no breaking changes. Please update: npm uninstall @daytonaio/sdk && npm i @daytona/sdk'
 
   '@develar/schema-utils@2.6.5':
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
@@ -6619,6 +6623,10 @@ packages:
 
   katex@0.16.47:
     resolution: {integrity: sha512-Eeo8Ys1doU1z+x8AZsPpQu+p/QcZBI5PeOo7QGQdy2x2m0MU/hYagBbGOmXwr5KVbEfVuWv9LpnQWeehogurjg==}
+    hasBin: true
+
+  katex@0.17.0:
+    resolution: {integrity: sha512-Vdw0ATsQ9V+LuegM/BTwQqV/6cTl5lbGcIrU+BCgLxyf6bo38ybOr372tuSIxir3CN720flu1meYR6XzNMwQnw==}
     hasBin: true
 
   keyv@4.5.4:
@@ -15540,6 +15548,10 @@ snapshots:
       setimmediate: 1.0.5
 
   katex@0.16.47:
+    dependencies:
+      commander: 8.3.0
+
+  katex@0.17.0:
     dependencies:
       commander: 8.3.0
 

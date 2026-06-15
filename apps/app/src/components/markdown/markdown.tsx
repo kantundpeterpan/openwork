@@ -18,8 +18,10 @@ import {
 import { bundledLanguages, codeToHtml } from "shiki";
 
 import { cn } from "@/lib/utils";
+import { katexMarkedExtension } from "@/lib/katex-marked";
 
 import { applyTextHighlights } from "./text-highlights";
+import "katex/dist/katex.min.css";
 
 function escapeHtml(value: string) {
   return value
@@ -131,21 +133,65 @@ function syncMarkdownImagePreviews(root: HTMLElement) {
 
 function sanitizeMarkdownHtml(value: string) {
   return DOMPurify.sanitize(value, {
+    ADD_TAGS: [
+      "annotation",
+      "math",
+      "merror",
+      "mfrac",
+      "mi",
+      "mmultiscripts",
+      "mn",
+      "mo",
+      "mover",
+      "mpadded",
+      "mphantom",
+      "mprescripts",
+      "mroot",
+      "mrow",
+      "msqrt",
+      "mstyle",
+      "msub",
+      "msubsup",
+      "msup",
+      "mtable",
+      "mtd",
+      "mtext",
+      "mtr",
+      "munder",
+      "munderover",
+      "semantics",
+      "svg",
+    ],
     ADD_ATTR: [
       "checked",
       "class",
+      "columnalign",
+      "columnlines",
+      "columnspacing",
       "data-openwork-image-preview",
       "data-openwork-image-toggle",
       "data-openwork-image-toggle-label",
       "data-openwork-shiki",
       "decoding",
       "disabled",
+      "fence",
       "hidden",
+      "linethickness",
       "loading",
+      "lspace",
+      "maxsize",
+      "minsize",
       "rel",
+      "rowlines",
+      "rspace",
+      "separator",
+      "src",
       "start",
+      "stretchy",
       "style",
+      "symmetric",
       "target",
+      "voffset",
     ],
   });
 }
@@ -251,6 +297,7 @@ const markdownParser = new Marked(baseMarkedOptions).use(
     emojis: emojiAliases,
     renderer: (token) => escapeHtml(token.emoji),
   }),
+  katexMarkedExtension,
 );
 
 const highlightedMarkdownParser = new Marked({
@@ -261,6 +308,7 @@ const highlightedMarkdownParser = new Marked({
     emojis: emojiAliases,
     renderer: (token) => escapeHtml(token.emoji),
   }),
+  katexMarkedExtension,
   markedShiki({
     async highlight(code, lang, props) {
       const language = parseShikiLanguage(lang);
