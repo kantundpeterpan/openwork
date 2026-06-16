@@ -515,6 +515,14 @@ export function SessionSurface(props: SessionSurfaceProps) {
   }, [props.sessionId, props.workspaceId]);
 
   useEffect(() => {
+    setToolSkills([]);
+    setToolMcpServers([]);
+    setToolMcpStatuses({});
+    setToolMcpStatus(null);
+    setToolImportedPlugins([]);
+  }, [props.workspaceId]);
+
+  useEffect(() => {
     if (!currentSnapshot) return;
     seedSessionState(props.workspaceId, currentSnapshot);
   }, [currentSnapshot, props.sessionId, props.workspaceId]);
