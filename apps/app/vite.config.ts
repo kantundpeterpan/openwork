@@ -120,7 +120,6 @@ export default defineConfig({
       "@codemirror/state",
       "@codemirror/view",
       "@codemirror/language",
-      "@lezer/highlight",
     ],
   },
 });

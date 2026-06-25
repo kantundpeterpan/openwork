@@ -17,7 +17,6 @@ import { php } from "@codemirror/lang-php";
 import { go } from "@codemirror/lang-go";
 import { sass } from "@codemirror/lang-sass";
 import { less } from "@codemirror/lang-less";
-import { syntaxHighlighting, defaultHighlightStyle } from "@codemirror/language";
 import { EditorState, StateEffect, type Extension } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { cn } from "@/lib/utils";
@@ -36,8 +35,6 @@ const editorTheme = EditorView.theme({
   ".cm-activeLine": { backgroundColor: "hsl(var(--muted) / 0.35)" },
   ".cm-activeLineGutter": { backgroundColor: "hsl(var(--muted) / 0.35)" },
 });
-
-const syntaxStyle = syntaxHighlighting(defaultHighlightStyle);
 
 export type FileEditorProps = {
   className?: string;
@@ -212,7 +209,6 @@ export function FileEditor(props: FileEditorProps) {
             }
           }),
           editorTheme,
-          syntaxStyle,
         ],
       }),
     });
@@ -251,7 +247,6 @@ export function FileEditor(props: FileEditorProps) {
           }
         }),
         editorTheme,
-        syntaxStyle,
       ]),
     });
   }, [langExtension]);
