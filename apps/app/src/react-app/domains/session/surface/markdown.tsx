@@ -15,7 +15,9 @@ import {
 } from "@shikijs/transformers";
 import { bundledLanguages, codeToHtml } from "shiki";
 
+import { katexMarkedExtension } from "@/lib/katex-marked";
 import { applyTextHighlights } from "./text-highlights";
+import "katex/dist/katex.min.css";
 
 function escapeHtml(value: string) {
   return value
@@ -159,6 +161,7 @@ const markdownParser = new Marked<string, string>(baseMarkedOptions).use(
     emojis: emojiAliases,
     renderer: (token) => escapeHtml(token.emoji),
   }),
+  katexMarkedExtension,
 );
 
 const highlightedMarkdownParser = new Marked<string, string>({
@@ -169,6 +172,7 @@ const highlightedMarkdownParser = new Marked<string, string>({
     emojis: emojiAliases,
     renderer: (token) => escapeHtml(token.emoji),
   }),
+  katexMarkedExtension,
   markedShiki({
     async highlight(code, lang, props) {
       const language = normalizeShikiLanguage(lang);
