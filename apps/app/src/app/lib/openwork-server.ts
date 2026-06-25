@@ -443,6 +443,18 @@ export type OpenworkWorkspaceFileStat = {
   updatedAt?: number;
 };
 
+export type OpenworkWorkspaceFileListEntry = {
+  path: string;
+  kind: "file" | "dir";
+  size: number;
+  mtimeMs: number;
+  revision: string;
+};
+
+export type OpenworkWorkspaceFileList = {
+  items: OpenworkWorkspaceFileListEntry[];
+};
+
 export type OpenworkInboxItem = {
   id: string;
   name?: string;
@@ -1622,6 +1634,15 @@ export function createOpenworkServerClient(options: { baseUrl: string; token?: s
         `/workspace/${encodeURIComponent(workspaceId)}/files/stat?path=${encodeURIComponent(path)}`,
         { token, hostToken },
       ),
+
+    listWorkspaceFiles: (workspaceId: string, prefix?: string) => {
+      const qs = prefix ? `?prefix=${encodeURIComponent(prefix)}` : "";
+      return requestJson<OpenworkWorkspaceFileList>(
+        baseUrl,
+        `/workspace/${encodeURIComponent(workspaceId)}/files/list${qs}`,
+        { token, hostToken },
+      );
+    },
 
     writeWorkspaceFile: (
       workspaceId: string,
