@@ -1223,4 +1223,19 @@ export function registerFileRoutes(options: RegisterFileRoutesOptions): void {
 
     return jsonResponse({ ok: true, path: relativePath, bytes, updatedAt: after.mtimeMs, revision });
   });
+
+  addRoute(routes, "GET", "/workspace/:id/files/list", "client", async (ctx) => {
+    const workspace = await resolveWorkspace(config, ctx.params.id);
+    const prefix = parseCatalogPathFilter(ctx.url.searchParams.get("prefix"));
+    const includeDirs = ctx.url.searchParams.get("includeDirs") !== "false";
+
+    const entries = await listWorkspaceCatalogEntries(workspace.path);
+    const filtered = entries.filter((entry) => {
+      if (!includeDirs && entry.kind === "dir") return false;
+      if (!matchesCatalogFilter(entry.path, prefix)) return false;
+      return true;
+    });
+
+    return jsonResponse({ items: filtered });
+  });
 }
