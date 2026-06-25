@@ -17,8 +17,10 @@ import { php } from "@codemirror/lang-php";
 import { go } from "@codemirror/lang-go";
 import { sass } from "@codemirror/lang-sass";
 import { less } from "@codemirror/lang-less";
+import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { EditorState, StateEffect, type Extension } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
+import { tags } from "@lezer/highlight";
 import { cn } from "@/lib/utils";
 
 const editorTheme = EditorView.theme({
@@ -35,6 +37,39 @@ const editorTheme = EditorView.theme({
   ".cm-activeLine": { backgroundColor: "hsl(var(--muted) / 0.35)" },
   ".cm-activeLineGutter": { backgroundColor: "hsl(var(--muted) / 0.35)" },
 });
+
+const syntaxStyle = syntaxHighlighting(
+  HighlightStyle.define([
+    { tag: tags.keyword, color: "#ff79c6" },
+    { tag: tags.comment, color: "#6272a4", fontStyle: "italic" },
+    { tag: tags.string, color: "#f1fa8c" },
+    { tag: tags.number, color: "#bd93f9" },
+    { tag: tags.bool, color: "#bd93f9" },
+    { tag: tags.regexp, color: "#f1fa8c" },
+    { tag: tags.typeName, color: "#8be9fd" },
+    { tag: tags.tagName, color: "#ff79c6" },
+    { tag: tags.attributeName, color: "#50fa7b" },
+    { tag: tags.propertyName, color: "#66d9ef" },
+    { tag: tags.variableName, color: "#f8f8f2" },
+    { tag: tags.definition(tags.variableName), color: "#50fa7b" },
+    { tag: tags.function(tags.variableName), color: "#66d9ef" },
+    { tag: tags.className, color: "#8be9fd" },
+    { tag: tags.labelName, color: "#66d9ef" },
+    { tag: tags.operator, color: "#ff79c6" },
+    { tag: tags.punctuation, color: "#6272a4" },
+    { tag: tags.bracket, color: "#6272a4" },
+    { tag: tags.meta, color: "#6272a4" },
+    { tag: tags.link, color: "#8be9fd", textDecoration: "underline" },
+    { tag: tags.heading, color: "#ff79c6", fontWeight: "600" },
+    { tag: tags.strong, fontWeight: "bold" },
+    { tag: tags.emphasis, fontStyle: "italic" },
+    { tag: tags.strikethrough, textDecoration: "line-through" },
+    { tag: tags.quote, color: "#6272a4", fontStyle: "italic" },
+    { tag: tags.deleted, color: "#ff5555" },
+    { tag: tags.inserted, color: "#50fa7b" },
+    { tag: tags.invalid, color: "#ff5555" },
+  ]),
+);
 
 export type FileEditorProps = {
   className?: string;
@@ -209,6 +244,7 @@ export function FileEditor(props: FileEditorProps) {
             }
           }),
           editorTheme,
+          syntaxStyle,
         ],
       }),
     });
@@ -247,6 +283,7 @@ export function FileEditor(props: FileEditorProps) {
           }
         }),
         editorTheme,
+        syntaxStyle,
       ]),
     });
   }, [langExtension]);
