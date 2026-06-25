@@ -116,5 +116,11 @@ export default defineConfig({
     alias: {
       "@": resolve(appRoot, "src"),
     },
+    dedupe: [
+      "@codemirror/state",
+      "@codemirror/view",
+      "@codemirror/language",
+      "@lezer/highlight",
+    ],
   },
 });
