@@ -385,10 +385,6 @@ export function SessionRoute() {
   const [renameWorkspaceId, setRenameWorkspaceId] = useState<string | null>(null);
   const [renameWorkspaceTitle, setRenameWorkspaceTitle] = useState("");
   const [renameWorkspaceBusy, setRenameWorkspaceBusy] = useState(false);
-  const [developerMode, setDeveloperMode] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("openwork.developerMode") === "1";
-  });
   const [paletteAccessibleTargets, setPaletteAccessibleTargets] = useState<OpenTarget[]>([]);
   const [providers, setProviders] = useState<ProviderListItem[]>([]);
   const [providerDefaults, setProviderDefaults] = useState<Record<string, string>>({});
@@ -615,7 +611,7 @@ export function SessionRoute() {
     todos,
   } = useSessionInteractions({
     client: opencodeClient,
-    workspaceId: selectedWorkspaceId,
+    workspaceId: selectedWorkspaceEndpoint?.workspaceId ?? selectedWorkspaceId,
     sessionId: selectedSessionId,
     workspaceRoot: selectedWorkspaceRoot,
   });
@@ -710,13 +706,10 @@ export function SessionRoute() {
   // Hidden and subagent-only entries are excluded — those are task-tool
   // delegation targets, not agents the user can run a session as.
   const listAgents = useCallback(async () => {
-    // Include engineReloadVersion so the composer refetches after newly added
-    // agent files become available, even when the inline picker is hidden.
-    void engineReloadVersion;
     if (!opencodeClient) return [];
     const list = unwrap(await opencodeClient.app.agents());
     return list.filter((agent) => !agent.hidden && agent.mode !== "subagent");
-  }, [engineReloadVersion, opencodeClient]);
+  }, [opencodeClient]);
 
   const handleOpenSettings = useCallback((route = "/settings/general", workspaceId = sidebarActiveWorkspaceId) => {
     const sessionId = workspaceId === sidebarActiveWorkspaceId ? selectedSessionId : null;
@@ -1300,22 +1293,6 @@ export function SessionRoute() {
     },
   ], [terminalOpen]);
 
-  const developerModePaletteItem = useMemo<PaletteItem>(() => ({
-    id: "developer-mode.toggle",
-    title: developerMode ? t("settings.disable_developer_mode") : t("settings.enable_developer_mode"),
-    detail: t("settings.developer_mode_desc"),
-    meta: developerMode ? "On" : "Off",
-    searchText: "developer dev mode debug diagnostics toggle enable disable",
-    action: () => {
-      setCommandPaletteOpen(false);
-      setDeveloperMode((current) => {
-        const next = !current;
-        try { window.localStorage.setItem("openwork.developerMode", next ? "1" : "0"); } catch {}
-        return next;
-      });
-    },
-  }), [developerMode]);
-
   const handleReorderWorkspaces = useCallback((workspaceIds: string[]) => {
     const activeWorkspaceIds = new Set(workspacesRef.current.map((workspace) => workspace.id));
     const nextOrderIds: string[] = [];
@@ -1512,7 +1489,7 @@ export function SessionRoute() {
       openworkServerStatus={client ? "connected" : "disconnected"}
       openworkServerClient={selectedWorkspaceEndpoint?.client ?? client}
       openworkServerToken={selectedWorkspaceServerToken}
-      developerMode={developerMode}
+      developerMode={typeof window !== "undefined" && window.localStorage.getItem("openwork.developerMode") === "1"}
       headerStatus={canCreateTask ? t("status.connected") : t("session.loading_detail")}
       busyHint={effectiveLoading ? t("session.loading_detail") : null}
       startupPhase={effectiveLoading ? "nativeInit" : "ready"}
@@ -1836,7 +1813,7 @@ export function SessionRoute() {
         }
       }}
       sessions={paletteSessionOptions}
-      extraItems={[sessionSearchPaletteItem, ...terminalPaletteItems, developerModePaletteItem]}
+      extraItems={[sessionSearchPaletteItem, ...terminalPaletteItems]}
       listAgents={listAgents}
       selectedAgent={selectedAgent}
       onSelectAgent={setSelectedAgent}
