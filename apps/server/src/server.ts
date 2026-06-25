@@ -1085,69 +1085,6 @@ function normalizeAuthorizedFolderPath(input: string | null | undefined): string
   return withoutTrailing || "/";
 }
 
-export function isSupportedWorkspaceTextFilePath(relativePath: string): boolean {
-  const lowered = relativePath.toLowerCase();
-  return [
-    ".md", ".mdx", ".markdown", ".rmd", ".qmd",
-    ".csv", ".tsv",
-    ".json", ".jsonc", ".jsonl",
-    ".yaml", ".yml",
-    ".toml",
-    ".xml", ".xsl", ".xsd",
-    ".html", ".htm", ".xhtml",
-    ".ts", ".tsx",
-    ".js", ".jsx", ".mjs", ".cjs",
-    ".css", ".scss", ".less", ".sass",
-    ".txt", ".log",
-    ".py", ".pyw", ".pyx",
-    ".r",
-    ".rb", ".erb",
-    ".sh", ".bash", ".zsh", ".fish", ".ksh", ".csh",
-    ".ps1", ".bat", ".cmd",
-    ".swift",
-    ".kt", ".kts",
-    ".dart",
-    ".lua",
-    ".pl", ".pm", ".t",
-    ".ex", ".exs",
-    ".clj", ".cljs", ".cljc", ".edn",
-    ".erl", ".hrl",
-    ".hs", ".lhs",
-    ".scala", ".sc",
-    ".groovy", ".gvy", ".gy", ".gsh",
-    ".cs", ".csx",
-    ".fs", ".fsx",
-    ".zig",
-    ".nim",
-    ".tex", ".sty", ".cls", ".bib",
-    ".sql",
-    ".rs",
-    ".java", ".jsp",
-    ".c", ".cpp", ".cxx", ".h", ".hpp", ".hxx", ".cc",
-    ".php", ".phtml", ".php3", ".php4", ".php5", ".phps",
-    ".go",
-    ".rst",
-    ".adoc", ".asciidoc",
-    ".org",
-    ".ini", ".cfg", ".conf",
-    ".env",
-    ".gitignore", ".gitattributes", ".gitmodules",
-    ".editorconfig",
-    ".dockerfile",
-    ".makefile", ".make",
-    ".cmake",
-    ".gradle",
-    ".tf", ".tfvars", ".tfstate", ".hcl",
-    ".bzl",
-    ".nix",
-    ".properties", ".prop",
-    ".diff", ".patch",
-    ".drawio", ".dio",
-  ].some((ext) =>
-    lowered.endsWith(ext),
-  );
-}
-
 function externalDirectoryKeyToAuthorizedFolder(key: string, value: unknown): string | null {
   if (value !== "allow") return null;
   const trimmed = key.trim();

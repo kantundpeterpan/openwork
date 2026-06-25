@@ -194,16 +194,13 @@ export function FileExplorerPanel({ client, workspaceId, workspaceRoot, onClose 
           <h3 className="text-xs font-medium text-muted-foreground">Files</h3>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  className="size-6"
-                  onClick={() => void loadFiles()}
-                  disabled={loading}
-                >
-                  <RefreshCw className={cn("size-3", loading && "animate-spin")} />
-                </Button>
+              <TooltipTrigger
+                className="group/button inline-flex shrink-0 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50 size-6"
+                onClick={() => void loadFiles()}
+                disabled={loading}
+                aria-label="Refresh files"
+              >
+                <RefreshCw className={cn("size-3", loading && "animate-spin")} />
               </TooltipTrigger>
               <TooltipContent>Refresh files</TooltipContent>
             </Tooltip>
@@ -272,15 +269,12 @@ export function FileExplorerPanel({ client, workspaceId, workspaceRoot, onClose 
                   {isMarkdownFile ? (
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            className="size-6"
-                            onClick={() => setPreview((p) => !p)}
-                          >
-                            {preview ? <Pencil className="size-3" /> : <Eye className="size-3" />}
-                          </Button>
+                        <TooltipTrigger
+                          className="group/button inline-flex shrink-0 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-muted hover:text-foreground size-6"
+                          onClick={() => setPreview((p) => !p)}
+                          aria-label={preview ? "Edit source" : "Preview rendered"}
+                        >
+                          {preview ? <Pencil className="size-3" /> : <Eye className="size-3" />}
                         </TooltipTrigger>
                         <TooltipContent>{preview ? "Edit source" : "Preview rendered"}</TooltipContent>
                       </Tooltip>
@@ -289,16 +283,13 @@ export function FileExplorerPanel({ client, workspaceId, workspaceRoot, onClose 
                   {dirty ? (
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          className="size-6"
-                          onClick={() => void handleSave()}
-                          disabled={saving}
-                        >
-                          <Save className={cn("size-3", saving && "animate-pulse")} />
-                        </Button>
+                      <TooltipTrigger
+                        className="group/button inline-flex shrink-0 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50 size-6"
+                        onClick={() => void handleSave()}
+                        disabled={saving}
+                        aria-label="Save file"
+                      >
+                        <Save className={cn("size-3", saving && "animate-pulse")} />
                       </TooltipTrigger>
                       <TooltipContent>Save file</TooltipContent>
                     </Tooltip>
