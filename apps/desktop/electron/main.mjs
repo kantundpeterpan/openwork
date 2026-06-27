@@ -35,7 +35,16 @@ import { createWorkspaceStore } from "./workspace-store.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
-const pty = require(["node", "pty"].join("-"));
+let _pty = null;
+function getPty() {
+  if (_pty !== null) return _pty;
+  try {
+    _pty = require(["node", "pty"].join("-"));
+  } catch {
+    _pty = { spawn: () => { throw new Error("Terminal not available in remote-only mode"); } };
+  }
+  return _pty;
+}
 const NATIVE_DEEP_LINK_EVENT = "openwork:deep-link-native";
 const TAURI_APP_IDENTIFIER = "com.differentai.openwork";
 const DEV_APP_IDENTIFIER = "com.differentai.openwork.dev";
@@ -578,6 +587,9 @@ function assertOpenworkServerReady(info) {
 }
 
 async function bootRuntimeForSelectedWorkspace() {
+  if (process.env.OPENWORK_REMOTE_ONLY === "1") {
+    return { ok: true, skipped: true, reason: "remote-only-mode" };
+  }
   const list = await workspaceStore.readWorkspaceState();
   const selectedId = list.selectedId || list.activeId || list.workspaces[0]?.id || "";
   const workspace = selectedId
@@ -1448,7 +1460,7 @@ ipcMain.handle("openwork:terminal:create", async (event, options = {}) => {
   const rows = Number.isFinite(options?.rows) ? Math.max(5, Math.floor(options.rows)) : 24;
   const terminalId = `term_${nextTerminalId++}`;
   const shellPath = defaultTerminalShell();
-  const child = pty.spawn(shellPath, [], {
+  const child = getPty().spawn(shellPath, [], {
     name: "xterm-256color",
     cols,
     rows,
