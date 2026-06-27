@@ -587,8 +587,12 @@ function assertOpenworkServerReady(info) {
 }
 
 async function bootRuntimeForSelectedWorkspace() {
-  if (process.env.OPENWORK_REMOTE_ONLY === "1") {
-    return { ok: true, skipped: true, reason: "remote-only-mode" };
+  const serverBundlePaths = [
+    path.resolve(__dirname, "..", "server", "dist", "embedded.js"),
+    ...(process.resourcesPath ? [path.resolve(process.resourcesPath, "server", "dist", "embedded.js")] : []),
+  ];
+  if (!serverBundlePaths.some(p => existsSync(p))) {
+    return { ok: true, skipped: true, reason: "no-embedded-server" };
   }
   const list = await workspaceStore.readWorkspaceState();
   const selectedId = list.selectedId || list.activeId || list.workspaces[0]?.id || "";
