@@ -2,6 +2,20 @@ name: Build Electron Desktop
 
 on:
   workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform(s) to build'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - macos
+          - linux
+          - windows
+          - macos,linux
+          - macos,windows
+          - linux,windows
   push:
     branches:
       - electron-notary-test
@@ -16,16 +30,20 @@ on:
 
 jobs:
   build-electron:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.platform == 'all' || contains(inputs.platform, matrix.platform_tag) }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: macos-latest
             artifact: macos
+            platform_tag: macos
           - os: ubuntu-latest
             artifact: linux
+            platform_tag: linux
           - os: windows-latest
             artifact: windows
+            platform_tag: windows
     runs-on: ${{ matrix.os }}
 
     steps:
