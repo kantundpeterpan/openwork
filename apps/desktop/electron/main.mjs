@@ -1013,6 +1013,13 @@ const desktopCommandHandlers = {
         String(args[0]?.name ?? "").trim(),
       );
   },
+  "hasEmbeddedServer": async () => {
+      const serverBundlePaths = [
+        path.resolve(__dirname, "..", "server", "dist", "embedded.js"),
+        ...(process.resourcesPath ? [path.resolve(process.resourcesPath, "server", "dist", "embedded.js")] : []),
+      ];
+      return serverBundlePaths.some(p => existsSync(p));
+  },
   "engineStart": async (event, ...args) => {
       const projectDir = String(args[0] ?? "").trim();
       const options = args[1] ?? {};

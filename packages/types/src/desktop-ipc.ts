@@ -355,6 +355,7 @@ export type DesktopCommandMap = {
   };
 
   // Engine / runtime lifecycle
+  hasEmbeddedServer: { args: []; result: boolean };
   engineStart: { args: [projectDir: string, options?: Record<string, unknown>]; result: EngineInfo };
   prepareFreshRuntime: { args: []; result: unknown };
   runtimeBootstrap: { args: []; result: unknown };

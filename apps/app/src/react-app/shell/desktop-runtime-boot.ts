@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import {
   engineInfo,
   engineStart,
+  hasEmbeddedServer,
   openworkServerInfo,
   openworkServerRestart,
   resolveWorkspaceListSelectedId,
@@ -93,6 +94,15 @@ export function useDesktopRuntimeBoot() {
           }
         }
         hydrateOpenworkServerSettingsFromEnv();
+
+        if (isElectronRuntime()) {
+          const hasServer = await hasEmbeddedServer();
+          if (!hasServer) {
+            markReady();
+            return;
+          }
+        }
+
         const preferredRemoteAccess = readOpenworkServerSettings().remoteAccessEnabled === true;
 
         const publishOpenworkServerInfo = (serverInfo: BootOpenworkServerInfo | null | undefined) => {
