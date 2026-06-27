@@ -4,14 +4,16 @@ import { useNavigate } from "react-router-dom";
 
 import { t } from "../../i18n";
 import {
+  hasEmbeddedServer,
   pickDirectory,
   resolveWorkspaceListSelectedId,
+  workspaceCreateRemote,
   workspaceSetRuntimeActive,
   workspaceSetSelected,
   type WorkspaceInfo,
   type WorkspaceList,
 } from "../../app/lib/desktop";
-import { isDesktopRuntime } from "../../app/utils";
+import { isDesktopRuntime, isElectronRuntime } from "../../app/utils";
 import { createClient, unwrap } from "../../app/lib/opencode";
 import { useLocal } from "../kernel/local-provider";
 import { usePlatform } from "../kernel/platform";
@@ -122,6 +124,11 @@ export function WelcomeRoute() {
   const denAuth = useDenAuth();
   const [state, dispatch] = useReducer(welcomeReducer, initialWelcomeState);
   const [manualFolder, setManualFolder] = useState("");
+  const [hasServer, setHasServer] = useState(true);
+
+  useEffect(() => {
+    if (isElectronRuntime()) hasEmbeddedServer().then(v => setHasServer(v));
+  }, []);
 
   // If user already completed onboarding, redirect away immediately.
   useEffect(() => {
@@ -242,14 +249,18 @@ export function WelcomeRoute() {
         };
         let list: WorkspaceList | null = null;
         try {
-          const { normalizedBaseUrl, resolvedToken, resolvedHostToken } =
-            await resolveOpenworkConnection();
-          if (normalizedBaseUrl && (resolvedToken || resolvedHostToken)) {
-            list = await createOpenworkServerClient({
-              baseUrl: normalizedBaseUrl,
-              token: resolvedToken || undefined,
-              hostToken: resolvedHostToken || undefined,
-            }).createRemoteWorkspace(payload);
+          if (isElectronRuntime() && !hasServer) {
+            list = await workspaceCreateRemote(payload);
+          } else {
+            const { normalizedBaseUrl, resolvedToken, resolvedHostToken } =
+              await resolveOpenworkConnection();
+            if (normalizedBaseUrl && (resolvedToken || resolvedHostToken)) {
+              list = await createOpenworkServerClient({
+                baseUrl: normalizedBaseUrl,
+                token: resolvedToken || undefined,
+                hostToken: resolvedHostToken || undefined,
+              }).createRemoteWorkspace(payload);
+            }
           }
         } catch {
           list = null;
@@ -280,12 +291,12 @@ export function WelcomeRoute() {
         dispatch({ type: "remote:finish" });
       }
     },
-    [markOnboardingComplete, navigate],
+    [markOnboardingComplete, navigate, hasServer],
   );
 
   const handleGetStarted = useCallback(async () => {
-    if (!isDesktopRuntime()) {
-      // Non-desktop: fall back to the modal for remote workspace creation.
+    if (!isDesktopRuntime() || !hasServer) {
+      // Web or remote-only Electron: show the chooser modal.
       dispatch({ type: "open" });
       return;
     }
@@ -293,7 +304,7 @@ export function WelcomeRoute() {
     const folder = typeof picked === "string" ? picked : null;
     if (!folder) return;
     await handleCreateWorkspace("starter", folder);
-  }, [handleCreateWorkspace]);
+  }, [handleCreateWorkspace, hasServer]);
 
   const handleUseManualFolder = useCallback(async () => {
     const folder = manualFolder.trim();
@@ -351,11 +362,13 @@ export function WelcomeRoute() {
         localError={state.createError}
         remoteSubmitting={state.remoteBusy}
         remoteError={state.remoteError}
-        localDisabled={!isDesktopRuntime()}
+        localDisabled={!isDesktopRuntime() || !hasServer}
         localDisabledReason={
-          isDesktopRuntime()
-            ? undefined
-            : t("app.local_disabled_reason")
+          !isDesktopRuntime()
+            ? t("app.local_disabled_reason")
+            : !hasServer
+              ? "Local workspaces require the OpenWork server to be installed."
+              : undefined
         }
       />
       {state.providerStep ? (
