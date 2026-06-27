@@ -1013,7 +1013,7 @@ const desktopCommandHandlers = {
         String(args[0]?.name ?? "").trim(),
       );
   },
-  "hasEmbeddedServer": async () => {
+  "hasEmbeddedServer": async (event) => {
       const serverBundlePaths = [
         path.resolve(__dirname, "..", "server", "dist", "embedded.js"),
         ...(process.resourcesPath ? [path.resolve(process.resourcesPath, "server", "dist", "embedded.js")] : []),
