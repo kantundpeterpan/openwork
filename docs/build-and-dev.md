@@ -235,6 +235,90 @@ In **client mode**, the UI connects to a remote OpenCode server by URL.
 
 ---
 
+## Environment Variables
+
+### Server connection (web UI)
+
+| Variable | Default | Description |
+|---|---|---|
+| `VITE_OPENWORK_URL` | — | Base URL of the OpenWork API server (e.g. `http://localhost:8787`) |
+| `VITE_OPENWORK_PORT` | — | Port override for the OpenWork server |
+| `VITE_OPENWORK_TOKEN` | — | Client bearer token for the server |
+| `VITE_OPENWORK_HOST_TOKEN` | — | Host approval token (for remote desktop connections) |
+
+### Deployment & version
+
+| Variable | Default | Description |
+|---|---|---|
+| `VITE_OPENWORK_DEPLOYMENT` | `desktop` | `"desktop"` or `"web"` — controls UI behavior |
+| `VITE_OPENWORK_APP_VERSION` | `"0.0.0"` | App version string injected at build time |
+
+### Analytics & feedback
+
+| Variable | Default | Description |
+|---|---|---|
+| `VITE_OPENWORK_POSTHOG_KEY` | `phc_4YnPTlDVYPjgwKvLuNxhbHjV5kadgvd7XLzVHWnCXAI` | PostHog project API key |
+| `VITE_OPENWORK_POSTHOG_HOST` | `https://us.i.posthog.com` | PostHog ingestion host |
+| `VITE_OPENWORK_FEEDBACK_URL` | `https://openworklabs.com/feedback` | Feedback form URL |
+
+### OpenCode & Den cloud
+
+| Variable | Default | Description |
+|---|---|---|
+| `VITE_OPENCODE_URL` | `http://127.0.0.1:4096` | Override for the OpenCode server URL |
+| `VITE_DEN_BASE_URL` | `https://app.openworklabs.com` | Den cloud authentication base URL |
+| `VITE_DEN_API_BASE_URL` | falls back to `VITE_DEN_BASE_URL` | Den cloud API base URL |
+| `VITE_DEN_REQUIRE_SIGNIN` | `false` | Set to `"1"`/`"true"` to force sign-in |
+
+### Dev & profiling
+
+| Variable | Default | Description |
+|---|---|---|
+| `VITE_OPENWORK_PROFILER` | `false` | Set to `"1"` to enable React Profiler overlay |
+| `VITE_ALLOWED_HOSTS` | — | Comma-separated additional hosts for Vite dev server |
+| `PORT` | `5173` | Vite dev server port |
+| `OPENWORK_PUBLIC_HOST` | — | Public hostname for Vite dev server allowed hosts |
+| `OPENWORK_DEV_MODE` | — | Set to `"1"` by dev scripts for dev-specific behavior |
+
+### Build / Electron packaging
+
+| Variable | Default | Description |
+|---|---|---|
+| `OPENWORK_ELECTRON_BUILD` | — | Set to `"1"` during Electron packaging; Vite emits relative asset paths for `file://` |
+| `OPENWORK_ELECTRON_REMOTE_DEBUG_PORT` | — | CDP remote debugging port for Electron (e.g. `9823`) |
+
+### Migration release (v0.12.0)
+
+| Variable | Default | Description |
+|---|---|---|
+| `VITE_OPENWORK_MIGRATION_RELEASE` | — | Set to `"1"` to show the Tauri-to-Electron migration prompt |
+| `VITE_OPENWORK_MIGRATION_VERSION` | — | Migration version string |
+| `VITE_OPENWORK_MIGRATION_MAC_ARM64_URL` | — | Download URL for macOS ARM64 build |
+| `VITE_OPENWORK_MIGRATION_MAC_X64_URL` | — | Download URL for macOS x64 build |
+| `VITE_OPENWORK_MIGRATION_WINDOWS_X64_URL` | — | Download URL for Windows x64 build |
+| `VITE_OPENWORK_MIGRATION_LINUX_ARM64_URL` | — | Download URL for Linux ARM64 build |
+| `VITE_OPENWORK_MIGRATION_LINUX_X64_URL` | — | Download URL for Linux x64 build |
+
+### Scripts & testing
+
+| Variable | Default | Description |
+|---|---|---|
+| `OPENCODE_SERVER_PASSWORD` | — | Password for Basic Auth to OpenCode server |
+| `OPENCODE_SERVER_USERNAME` | `opencode` | Username for Basic Auth (only used with password set) |
+| `CDP_URL` | `http://127.0.0.1:9825` | Chrome DevTools Protocol endpoint for voice automation tests |
+
+### Vite built-in (`import.meta.env.*`)
+
+| Variable | Description |
+|---|---|
+| `import.meta.env.DEV` | `true` when running in Vite dev mode |
+| `import.meta.env.PROD` | `true` in production builds |
+| `import.meta.env.BASE_URL` | Vite `base` path (`"/"` in dev/web, `"./"` in Electron builds) |
+
+Standard Vite convention: all `VITE_*` variables are available to browser code via `import.meta.env.*`. Variables without the `VITE_` prefix are only available at build time in `vite.config.ts` or Node.js scripts.
+
+---
+
 ## Troubleshooting
 
 ### Linux / Wayland crashes
